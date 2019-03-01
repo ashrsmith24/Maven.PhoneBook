@@ -1,5 +1,8 @@
 package com.zipcodewilmington.phonebook;
 
+import sun.jvm.hotspot.utilities.Assert;
+
+import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
@@ -10,52 +13,87 @@ import java.util.TreeMap;
 
 public class PhoneBook {
 
-    //add Field
-    //accessor will be private)
-    // I have to put the type (Map<String, String>)
-    private Map<String, String> entries;
 
-    //Constructor
-    public PhoneBook() {
-        //intializing the entries
-        entries = new TreeMap<String, String>();
+    private TreeMap<String, ArrayList<String>> phonebookMap;
+
+
+    public PhoneBook(){
+        this.phonebookMap = new TreeMap<String, ArrayList<String>>();
     }
 
-    public void add(String name, String number) {
-        entries.put(name, number);
+    public TreeMap<String, ArrayList<String>> getPhonebookMap() {
+        return phonebookMap;
     }
 
-    public Integer size() {
-        return entries.size();
+    // next adds an entry to the composite associate data type
+    public void add(String name, String phoneNumber){
+        if (phonebookMap.containsKey(name)){
+            phonebookMap.get(name).add(phoneNumber);
+        }
+        else {
+            ArrayList<String> numbers = new ArrayList<String>();
+            numbers.add(phoneNumber);
+            phonebookMap.put(name, numbers);
+        }
     }
 
-    public void remove(String name) {
-        entries.remove(name);
+    // remove the entry to the composite associate data type
+    public void remove(String name, String phoneNumber){
+        try{
+            if (phonebookMap.get(name).size() == 1){
+                this.removeRecord(name);
+            }
+            else {
+                phonebookMap.get(name).remove(phoneNumber);
+            }
+        }
+        catch(NullPointerException e){
+            System.out.println("Entry does not exist in this Phonebook");
+        }
     }
 
-    public String lookUp(String name) {
-        return entries.get(name);
+    // i have to return the phone number for the respective input name
+    public ArrayList<String> lookup(String name){
+        return phonebookMap.get(name);
     }
 
-    public String reverseLookUp(String phoneNumber) {
-        for (Map.Entry<String, String> entry : entries.entrySet()) {
-            if (entry.getValue().equals(phoneNumber)) {
+    // i have to return the name for the respective input phoneNumber
+    public String reverseLookup(String phoneNumber){
+        for (Map.Entry<String, ArrayList<String>> entry : phonebookMap.entrySet()){
+            if (entry.getValue().contains(phoneNumber)){
                 return entry.getKey();
             }
         }
         return null;
     }
 
-    public String display() {
-        String result = "";
-        for (Map.Entry<String, String> entry : entries.entrySet()) {
-            result += entry.getKey() + " " + entry.getValue() + "\n";
-
+    // print a human-readable list of all entries
+    // names and numbers(phone) in order.
+    public void display(){
+        for (Map.Entry<String, ArrayList<String>> entry : phonebookMap.entrySet()){
+            System.out.println(entry.getKey() + ": ");
+            for (String number : entry.getValue()){
+                System.out.println(number);
+            }
         }
-
-        return result;
     }
-}
+
+    // i have to removeRecord method for
+    // removing an entire entry from your PhoneBook.
+    public void removeRecord(String name){
+        phonebookMap.remove(name);
+    }
+
+
+
+
+    }
+
+
+
+
+
+
 
 
 

@@ -5,116 +5,121 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.TreeMap;
+
 public class PhoneBookTest {
 
     private PhoneBook testPhoneBook;
-
-    @Before
-    public void setup(){
-     testPhoneBook = new PhoneBook();
-    }
-
-//    @Test
-//    public void hasEntryTest() {
-//        //given
-//        String fullName = "Ashley Smith";
-//        Boolean hasEntryTest = true;
-//        //when
-//        testPhoneBook.add("Ashley Smith", "");
-//        Boolean actual = PhoneBook.hasEntry("Ashley Smith");
-//
-//        //then
-//        Assert.assertEquals(hasEntryTest, actual);
-//    }
-
-     @Test
+    @Test
     public void addTest(){
-        //Given - i created a new instance of the class PhoneBook
-        PhoneBook phoneBook = new PhoneBook();
-        Integer expected = 1;
+        // Given
+        PhoneBook phonebook = new PhoneBook();
+        TreeMap<String, ArrayList<String>> map = phonebook.getPhonebookMap();
+        String name = "Ashley";
+        String phonenumber = "6468840246";
+        String phonenumber2 = "6468840248";
+        ArrayList<String> expected = new ArrayList<String>();
+        expected.add(phonenumber);
 
-         //When
-        phoneBook.add("Ashley","646-884-2468");
+        // When
+        phonebook.add(name, phonenumber);
+        ArrayList<String> actual = map.get(name);
 
-         //Then
-        Integer actual = phoneBook.size();
-        Assert.assertEquals(expected,actual);
-//
-//    @Test
-//    public void addEntryTest(){
-//        //given
-//        String fullName =  "Ashley Smith";
-//        String number = "646-884-2468";
-//        testPhoneBook.add(fullName, number);
-//        //when
-//        Arraylist<String> contacts = testPhoneBook.getPhoneBook();
-//        //then
-//        assertTrue(contacts.contains(fullName));
+        // Then
+        Assert.assertEquals(phonenumber, map.get(name).get(0));
+        Assert.assertEquals(expected, actual);
+        Assert.assertNull(map.get("notakey"));
 
+        // When
+        phonebook.add(name, phonenumber2);
+        expected.add(phonenumber2);
+
+        // Then
+        Assert.assertEquals(expected, actual);
+        Assert.assertEquals(phonenumber2, map.get(name).get(1));
     }
+
     @Test
     public void removeTest(){
-            //Given
-            PhoneBook phoneBook = new PhoneBook();
-            phoneBook.add("Ashley Smith","646-884-2468");
-            Integer expected = 0;
+        // Given
+        PhoneBook phonebook = new PhoneBook();
+        TreeMap<String, ArrayList<String>> map = phonebook.getPhonebookMap();
+        String name = "Ashley";
+        String phonenumber = "6468840246";
+        String phonenumber2 = "6468840248";
+        phonebook.add(name, phonenumber);
+        phonebook.add(name, phonenumber2);
 
-            //When i remove the name from the phone book
-            phoneBook.remove("Ashley Smith");
+        // When
+        phonebook.remove(name, phonenumber);
 
-            //Then
-            Integer actual = phoneBook.size();
-            Assert.assertEquals(expected,actual);
-        }
+        // Then
+        Assert.assertEquals(phonenumber2, map.get(name).get(0));
 
+        // When
+        phonebook.remove(name, phonenumber2);
 
-        @Test
-        public void loopUpTest(){
-            //Given
-            PhoneBook phoneBook = new PhoneBook();
-            String expected = "646-884-0720";
-            String name = "Ashley";
-            phoneBook.add(name, expected);
+        // Then
+        Assert.assertNull(map.get(name));
+        Assert.assertEquals(0, map.size());
 
+    }
 
-            //when the method returns, store the result into a variable actual
-            String actual = phoneBook.lookUp(name);
+    @Test
+    public void lookupTest(){
+        // Given
+        PhoneBook phonebook = new PhoneBook();
+        TreeMap<String, ArrayList<String>> map = phonebook.getPhonebookMap();
+        String name = "Ashley";
+        String phonenumber = "6468840246";
+        phonebook.add(name, phonenumber);
 
-            //Then
-            Assert.assertEquals(expected, actual);
-        }
-        @Test
-        public void reverseLoopUpTest() {
-            //Given
-            PhoneBook phoneBook = new PhoneBook();
-            String expected = "Ashley";
-            String phoneNumber = "646-884-0720";
-            phoneBook.add(expected,phoneNumber);
+        // When
+        ArrayList<String> actual = phonebook.lookup(name);
 
-            //When
-            String actual = phoneBook.reverseLookUp(phoneNumber);
+        // Then
+        Assert.assertEquals(phonenumber, actual.get(0));
+    }
 
-            //Then
-            Assert.assertEquals(expected, actual);
+    @Test
+    public void reverseLookupTest(){
+        // Given
+        PhoneBook phonebook = new PhoneBook();
+        TreeMap<String, ArrayList<String>> map = phonebook.getPhonebookMap();
+        String name = "Ashley";
+        String phonenumber = "6468840246";
+        String phonenumber2 = "6468840248";
+        phonebook.add(name, phonenumber);
+        phonebook.add(name, phonenumber2);
 
-        }
-        @Test
-        public void displayTest(){
-            PhoneBook phoneBook = new PhoneBook();
-            phoneBook.add("Ashley", "646-884-2468");
-            phoneBook.add("Ajah", "646-884-0204");
+        // When
+        String actual = phonebook.reverseLookup(phonenumber);
+        String actual2 = phonebook.reverseLookup(phonenumber2);
 
-            //When
-            String actual = phoneBook.display();
-            String expected = "Ashley 646-884-2468\n" +
-                    "Ajah 646-884-0204\n";
-            //Then
-            Assert.assertEquals(expected,actual);
+        // Then
+        Assert.assertEquals(name, actual);
+        Assert.assertEquals(name, actual2);
+        Assert.assertNull(phonebook.reverseLookup("itsnotaphonenumer"));
+    }
 
+    @Test
+    public void removeRecordTest(){
+        // Given
+        PhoneBook phonebook = new PhoneBook();
+        TreeMap<String, ArrayList<String>> map = phonebook.getPhonebookMap();
+        String name = "Ashley";
+        String phonenumber = "6468840246";
+        phonebook.add(name, phonenumber);
 
+        // When
+        phonebook.removeRecord(name);
 
-        }
+        // Then
+        Assert.assertNull(map.get(name));
+        Assert.assertEquals(0, map.size());
 
+    }
 
     }
 
